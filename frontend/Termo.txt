@@ -1,0 +1,105 @@
+TERMO DE PRESTAÇÃO DE SERVIÇOS
+
+Pelo presente Termo de Prestação de Serviços, as partes abaixo identificadas acordam com as condições para a execução dos serviços técnicos oferecidos pela [Nome da Empresa de Assistência Técnica], doravante denominado "Prestador", e o cliente, doravante denominado "Contratante".
+
+1. DAS PARTES
+
+Prestador:
+Edson da Silva Leandro
+CPF: 112.368.706.81
+Endereço: Av. Marcia Antonia - 380 - Tereza Cristina - São Joaquim de Bicas
+Telefone: 31997599924
+E-mail: euedsonleandro@gmail.com
+
+Contratante:
+Nome: {{os.client_name}}
+CPF/CNPJ: 
+Endereço: 
+Telefone: {{os.contact}}
+E-mail: 
+
+2. DO OBJETO DO CONTRATO
+
+O presente contrato tem como objeto a prestação dos seguintes serviços:
+
+Serviços Técnicos: {{itens}}
+
+Peças e Equipamentos: Caso necessário, o prestador fornecerá peças e equipamentos, cujos preços serão acordados entre as partes antes de qualquer substituição.
+
+3. DAS CONDIÇÕES DE PREÇO E PAGAMENTO
+
+O preço dos serviços prestados será calculado com base no tempo de mão de obra e no custo das peças, quando aplicável.
+
+O valor total do serviço será informado ao cliente no momento do orçamento, sendo considerado o valor final após a aprovação do serviço.
+
+O pagamento deverá ser realizado à vista através de transferência bancária, cartão de crédito ou PIX.
+
+Valor total do orçamento: R$ {{total}}
+
+4. DO PRAZO DE EXECUÇÃO
+
+O prazo para execução do serviço será informado previamente ao cliente, sendo estipulado conforme a complexidade do serviço e a disponibilidade de peças.
+
+O prazo estimado para conclusão do serviço será de até 5 dias úteis, podendo ser alterado mediante acordo prévio entre as partes.
+
+5. DAS OBRIGAÇÕES DAS PARTES
+
+Obrigações do Prestador:
+
+Realizar os serviços conforme o descrito no orçamento aprovado.
+
+Garantir a qualidade e funcionamento adequado das peças substituídas.
+
+Emitir nota fiscal referente ao valor do serviço prestado.
+
+Fornecer garantia de 30 dias sobre os serviços realizados, conforme a natureza do serviço prestado.
+
+Obrigações do Contratante:
+
+Informar corretamente o problema e a necessidade de reparo.
+
+Aprovar o orçamento antes da execução do serviço.
+
+Efetuar o pagamento conforme as condições acordadas.
+
+Retirar o equipamento no prazo estipulado após a conclusão do serviço.
+
+6. DA GARANTIA
+
+O serviço prestado possui garantia de 30 para peças e mão de obra, conforme descrito no orçamento.
+
+A garantia não cobre defeitos causados por mau uso, quedas, danos externos ou falhas em equipamentos não relacionados ao serviço contratado.
+
+7. DAS CONDIÇÕES DE CANCELAMENTO E DESISTÊNCIA
+
+O contratante poderá cancelar o serviço antes do início da execução, desde que informe o prestador com no mínimo 1 dia de antecedência
+
+Caso o serviço já tenha sido iniciado, será cobrada uma taxa de cancelamento de 20% do valor total, para cobrir custos de mão de obra e peças adquiridas.
+
+Não haverá reembolso para serviços já realizados ou peças adquiridas para o serviço contratado.
+
+8. DA RESPONSABILIDADE
+
+O prestador não será responsável por danos causados por uso indevido, tentativa de reparo por terceiros ou falhas decorrentes de fatores externos ao serviço prestado.
+
+O prestador compromete-se a tratar os equipamentos com cuidado, porém, não se responsabiliza por eventuais danos decorrentes do uso do equipamento em condições inadequadas ou obsolescentes.
+
+9. DO FORO
+
+As partes elegem o foro da comarca de [Cidade], para resolver quaisquer litígios oriundos deste Termo de Prestação de Serviços.
+
+10. DA ASSINATURA
+
+Por estarem assim justas e acordadas, as partes assinam o presente Termo de Prestação de Serviços em duas vias de igual teor e forma, na presença das testemunhas abaixo.
+
+São Joaquim de Bicas, {{data}}
+
+_____________________________
+{{os.client_name}}
+Assinatura do Contratante
+
+
+_____________________________
+Edson da Silva Leandro
+Assinatura do Prestador
+
