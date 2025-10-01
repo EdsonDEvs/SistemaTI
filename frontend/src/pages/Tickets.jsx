@@ -26,7 +26,7 @@ export default function Tickets(){
     setList(prev=> prev.filter(x=> x.id!==t.id))
   }
 
-  const filtered = useMemo(()=> list.filter(t => {
+  const filtered = useMemo(()=> (list || []).filter(t => {
     if (onlyOpen && (t.status==='Concluído')) return false
     const s = `${t.title} ${t.client} ${t.device}`.toLowerCase()
     return s.includes(q.toLowerCase())

@@ -125,7 +125,7 @@ export default function Orders(){
           <div className="row">
             <button className="success" onClick={addItem}>Adicionar item</button>
           </div>
-          {items.map((it, i)=> (
+          {(items || []).map((it, i)=> (
             <div key={i} className="row" style={{marginTop:8}}>
               <select value={it.type} onChange={e=>changeItem(i,'type',e.target.value)}>
                 <option value="service">Serviço</option>
@@ -148,7 +148,7 @@ export default function Orders(){
         <table>
           <thead><tr><th>Nº</th><th>Cliente</th><th>Status</th><th>Total</th><th>Ações</th></tr></thead>
           <tbody>
-            {list.map(os => {
+            {(list || []).map(os => {
               const total = (os.items||[]).reduce((s,it)=> s + it.total, 0)
               return (
                 <tr key={os.id}>

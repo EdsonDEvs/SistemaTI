@@ -107,7 +107,7 @@ export default function Services(){
             </tr>
           </thead>
           <tbody>
-            {items.map(s=> {
+            {(items || []).map(s=> {
               const isEditing = editId === s.id
               return (
                 <tr key={s.id}>
