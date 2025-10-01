@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard.jsx'
 import Services from './pages/Services.jsx'
 import Orders from './pages/Orders.jsx'
 import Finance from './pages/Finance.jsx'
+import Expenses from './pages/Expenses.jsx'
 import Tickets from './pages/Tickets.jsx'
 import './styles.css'
 
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/orders" element={<Orders />} />
           <Route path="/tickets" element={<Tickets />} />
           <Route path="/finance" element={<Finance />} />
+          <Route path="/expenses" element={<Expenses />} />
         </Route>
       </Routes>
     </BrowserRouter>

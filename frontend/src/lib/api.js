@@ -30,6 +30,8 @@ export const FinanceApi = {
   incomeCreate: (data) => api.post('/finance/income', data).then(r=>r.data),
   expenseList: () => api.get('/finance/expense').then(r=>r.data),
   expenseCreate: (data) => api.post('/finance/expense', data).then(r=>r.data),
+  expenseUpdate: (id, data) => api.put(`/finance/expense/${id}`, data).then(r=>r.data),
+  expenseDelete: (id) => api.delete(`/finance/expense/${id}`).then(r=>r.data),
   dashboard: (month) => api.get('/finance/dashboard', { params: { month } }).then(r=>r.data)
 }
 

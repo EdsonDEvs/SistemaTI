@@ -12,6 +12,7 @@ export default function AppLayout(){
           <NavLink to="/orders">OS</NavLink>
           <NavLink to="/tickets">Chamados</NavLink>
           <NavLink to="/finance">Financeiro</NavLink>
+          <NavLink to="/expenses">Gastos</NavLink>
         </nav>
       </aside>
       <main className="content">

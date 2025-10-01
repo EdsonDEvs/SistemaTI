@@ -43,6 +43,28 @@ router.post('/expense', (req, res) => {
   res.status(201).json(get('SELECT * FROM finance_expense WHERE id = last_insert_rowid()'));
 });
 
+router.put('/expense/:id', (req, res) => {
+  const schema = z.object({
+    date: z.string(),
+    category: z.string(),
+    description: z.string().optional().default(''),
+    amount: z.number().min(0),
+    fixed: z.boolean().optional().default(false)
+  });
+  const data = schema.parse(req.body);
+  const id = parseInt(req.params.id);
+  run(`UPDATE finance_expense 
+    SET date=@date, category=@category, description=@description, amount=@amount, fixed=@fixed 
+    WHERE id=@id`, { ...data, fixed: data.fixed ? 1 : 0, id });
+  res.json(get('SELECT * FROM finance_expense WHERE id = @id', { id }));
+});
+
+router.delete('/expense/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  run('DELETE FROM finance_expense WHERE id = @id', { id });
+  res.status(204).send();
+});
+
 router.get('/dashboard', (req, res) => {
   const month = req.query.month; // YYYY-MM
   const [y, m] = month ? month.split('-').map(Number) : [new Date().getFullYear(), new Date().getMonth() + 1];
