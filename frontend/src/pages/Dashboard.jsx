@@ -24,10 +24,10 @@ export default function Dashboard(){
           <div>Mês</div>
           <input type="month" value={month} onChange={e=>setMonth(e.target.value)} />
         </div>
-        <div className="card" style={{flex:1}}><div>Faturamento</div><h2>R$ {data.revenue.toFixed(2)}</h2></div>
-        <div className="card" style={{flex:1}}><div>Despesas</div><h2>R$ {data.cost.toFixed(2)}</h2></div>
-        <div className="card" style={{flex:1}}><div>Lucro</div><h2>R$ {data.profit.toFixed(2)}</h2></div>
-        <div className="card" style={{flex:1}}><div>Ticket médio</div><h2>R$ {data.avgTicket.toFixed(2)}</h2></div>
+        <div className="card" style={{flex:1}}><div>Faturamento</div><h2>R$ {(data.revenue || 0).toFixed(2)}</h2></div>
+        <div className="card" style={{flex:1}}><div>Despesas</div><h2>R$ {(data.cost || 0).toFixed(2)}</h2></div>
+        <div className="card" style={{flex:1}}><div>Lucro</div><h2>R$ {(data.profit || 0).toFixed(2)}</h2></div>
+        <div className="card" style={{flex:1}}><div>Ticket médio</div><h2>R$ {(data.avgTicket || 0).toFixed(2)}</h2></div>
       </div>
       <div className="card">
         <h3>Receitas x Despesas</h3>

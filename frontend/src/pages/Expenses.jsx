@@ -80,8 +80,8 @@ export default function Expenses(){
     setEditingId(null)
   }
 
-  const totalAmount = filteredExpenses.reduce((sum, e) => sum + e.amount, 0)
-  const categories = [...new Set(expenses.map(e => e.category))]
+  const totalAmount = (filteredExpenses || []).reduce((sum, e) => sum + (e.amount || 0), 0)
+  const categories = [...new Set((expenses || []).map(e => e.category))]
 
   return (
     <div>
