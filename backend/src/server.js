@@ -3,6 +3,11 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import { db, initDb } from './store/db.js';
+import { initFirebase } from './store/firebase.js';
+
+// Carregar variáveis de ambiente
+dotenv.config();
+dotenv.config({ path: './firebase.env' });
 import settingsRouter from './routes/settings.js';
 import servicesRouter from './routes/services.js';
 import osRouter from './routes/os.js';
@@ -13,6 +18,9 @@ import ticketsRouter from './routes/tickets.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+// Inicializar Firebase
+initFirebase();
 
 app.use(cors());
 app.use(express.json());

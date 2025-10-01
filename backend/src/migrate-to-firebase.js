@@ -4,7 +4,7 @@ import { FirebaseServices, FirebaseOrders, FirebaseFinance, FirebaseTickets, Fir
 import dotenv from 'dotenv';
 
 // Carregar variáveis de ambiente
-dotenv.config();
+dotenv.config({ path: './.env' });
 
 async function migrateToFirebase() {
   console.log('🔥 Iniciando migração para Firebase...');
