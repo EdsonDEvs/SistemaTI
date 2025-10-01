@@ -107,7 +107,7 @@ export default function Services(){
             </tr>
           </thead>
           <tbody>
-            {(items || []).map(s=> {
+            {Array.isArray(items) ? items.map(s=> {
               const isEditing = editId === s.id
               return (
                 <tr key={s.id}>
@@ -130,7 +130,7 @@ export default function Services(){
                   </td>
                 </tr>
               )
-            })}
+            }) : null}
           </tbody>
         </table>
       </div>

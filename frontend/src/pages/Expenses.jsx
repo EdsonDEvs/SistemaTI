@@ -84,8 +84,8 @@ export default function Expenses(){
     setEditingId(null)
   }
 
-  const totalAmount = (filteredExpenses || []).reduce((sum, e) => sum + (e.amount || 0), 0)
-  const categories = [...new Set((expenses || []).map(e => e.category))]
+  const totalAmount = Array.isArray(filteredExpenses) ? filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0) : 0
+  const categories = [...new Set(Array.isArray(expenses) ? expenses.map(e => e.category) : [])]
 
   return (
     <div>
@@ -189,7 +189,7 @@ export default function Expenses(){
             </tr>
           </thead>
           <tbody>
-            {(filteredExpenses || []).map(expense => (
+            {Array.isArray(filteredExpenses) ? filteredExpenses.map(expense => (
               <tr key={expense.id}>
                 <td>{expense.date}</td>
                 <td>{expense.category}</td>
@@ -222,11 +222,11 @@ export default function Expenses(){
                   </button>
                 </td>
               </tr>
-            ))}
+            )) : null}
           </tbody>
         </table>
 
-        {filteredExpenses.length === 0 && (
+        {(!Array.isArray(filteredExpenses) || filteredExpenses.length === 0) && (
           <div style={{textAlign: 'center', padding: '20px', color: '#666'}}>
             Nenhum gasto encontrado com os filtros aplicados
           </div>

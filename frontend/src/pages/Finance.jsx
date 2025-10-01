@@ -27,7 +27,7 @@ export default function Finance(){
         <table>
           <thead><tr><th>Data</th><th>Cliente</th><th>Líquido</th></tr></thead>
           <tbody>
-            {(income || []).map(i=> <tr key={i.id}><td>{i.date}</td><td>{i.client}</td><td>R$ {i.net.toFixed(2)}</td></tr>)}
+            {Array.isArray(income) ? income.map(i=> <tr key={i.id}><td>{i.date}</td><td>{i.client}</td><td>R$ {i.net.toFixed(2)}</td></tr>) : null}
           </tbody>
         </table>
       </div>
@@ -45,7 +45,7 @@ export default function Finance(){
         <table>
           <thead><tr><th>Data</th><th>Categoria</th><th>Valor</th></tr></thead>
           <tbody>
-            {(expense || []).map(i=> <tr key={i.id}><td>{i.date}</td><td>{i.category}</td><td>R$ {i.amount.toFixed(2)}</td></tr>)}
+            {Array.isArray(expense) ? expense.map(i=> <tr key={i.id}><td>{i.date}</td><td>{i.category}</td><td>R$ {i.amount.toFixed(2)}</td></tr>) : null}
           </tbody>
         </table>
       </div>
