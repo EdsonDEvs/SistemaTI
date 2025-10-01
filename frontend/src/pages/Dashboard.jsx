@@ -13,8 +13,8 @@ export default function Dashboard(){
 
   const chartData = Array.from({length: 30}).map((_,i)=>({
     day: String(i+1).padStart(2,'0'),
-    receita: data.incomes.filter(x=>x.date.slice(8,10)===String(i+1).padStart(2,'0')).reduce((s,x)=>s+x.net,0),
-    despesa: data.expenses.filter(x=>x.date.slice(8,10)===String(i+1).padStart(2,'0')).reduce((s,x)=>s+x.amount,0)
+    receita: (data.incomes || []).filter(x=>x.date.slice(8,10)===String(i+1).padStart(2,'0')).reduce((s,x)=>s+x.net,0),
+    despesa: (data.expenses || []).filter(x=>x.date.slice(8,10)===String(i+1).padStart(2,'0')).reduce((s,x)=>s+x.amount,0)
   }))
 
   return (

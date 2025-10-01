@@ -31,7 +31,7 @@ export default function Expenses(){
   }
 
   function filterExpenses(){
-    let filtered = expenses
+    let filtered = expenses || []
 
     if(filters.category){
       filtered = filtered.filter(e => e.category.toLowerCase().includes(filters.category.toLowerCase()))
