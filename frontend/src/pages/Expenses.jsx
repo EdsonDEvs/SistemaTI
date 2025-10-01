@@ -27,7 +27,11 @@ export default function Expenses(){
   },[expenses, filters])
 
   function reload(){ 
-    FinanceApi.expenseList().then(setExpenses)
+    FinanceApi.expenseList().then(data => {
+      setExpenses(Array.isArray(data) ? data : [])
+    }).catch(() => {
+      setExpenses([])
+    })
   }
 
   function filterExpenses(){
@@ -185,7 +189,7 @@ export default function Expenses(){
             </tr>
           </thead>
           <tbody>
-            {filteredExpenses.map(expense => (
+            {(filteredExpenses || []).map(expense => (
               <tr key={expense.id}>
                 <td>{expense.date}</td>
                 <td>{expense.category}</td>
