@@ -16,10 +16,20 @@ function suggestPrice({ hours, parts_cost }, settings) {
 
 router.get('/', async (req, res) => {
   if (hasFirebase()) {
-    const db = getFirestore();
-    const snap = await db.collection('services').where('active','==',1).orderBy('name').get();
-    const out = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    return res.json(out);
+    try {
+      const db = getFirestore();
+      const snap = await db.collection('services').get();
+      const out = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(service => service.active === 1 || service.active === true)
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      return res.json(out);
+    } catch (error) {
+      console.error('Firebase error:', error);
+      // Fallback to SQLite
+      const rows = all('SELECT * FROM services WHERE active = 1 ORDER BY name');
+      return res.json(rows);
+    }
   }
   const rows = all('SELECT * FROM services WHERE active = 1 ORDER BY name');
   res.json(rows);
