@@ -19,8 +19,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Inicializar Firebase
-initFirebase();
+// Inicializar Firebase (opcional)
+try {
+  initFirebase();
+} catch (error) {
+  console.log('Firebase não configurado, usando SQLite');
+}
 
 app.use(cors());
 app.use(express.json());

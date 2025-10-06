@@ -17,7 +17,11 @@ export function initFirebase() {
 }
 
 export function hasFirebase() {
-  return Boolean(initFirebase());
+  try {
+    return Boolean(initFirebase());
+  } catch (error) {
+    return false;
+  }
 }
 
 export function getFirestore() { return initFirebase(); }
