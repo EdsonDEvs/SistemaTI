@@ -10,12 +10,49 @@ export default function Orders(){
   const [list, setList] = useState([])
   const [form, setForm] = useState({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
   const [items, setItems] = useState([])
+  const [editingId, setEditingId] = useState(null)
+  const [editForm, setEditForm] = useState({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
+  const [editItems, setEditItems] = useState([])
 
   useEffect(()=>{ OrdersApi.list().then(setList) },[])
 
   function addItem(){ setItems(prev=>[...prev, { type:'service', description:'', qty:1, unit_cost:0, unit_price:0 }]) }
   function changeItem(i, field, value){ setItems(prev=> prev.map((it,idx)=> idx===i? { ...it, [field]: (field==='qty'||field==='unit_cost'||field==='unit_price')? Number(value): value }: it)) }
   function removeItem(i){ setItems(prev=> prev.filter((_,idx)=> idx!==i)) }
+
+  // Funções para edição
+  function addEditItem(){ setEditItems(prev=>[...prev, { type:'service', description:'', qty:1, unit_cost:0, unit_price:0 }]) }
+  function changeEditItem(i, field, value){ setEditItems(prev=> prev.map((it,idx)=> idx===i? { ...it, [field]: (field==='qty'||field==='unit_cost'||field==='unit_price')? Number(value): value }: it)) }
+  function removeEditItem(i){ setEditItems(prev=> prev.filter((_,idx)=> idx!==i)) }
+
+  async function startEdit(os){
+    setEditingId(os.id)
+    setEditForm({
+      number: os.number || '',
+      client_name: os.client_name || '',
+      contact: os.contact || '',
+      device: os.device || '',
+      reported_issue: os.reported_issue || '',
+      diagnosis: os.diagnosis || '',
+      status: os.status || 'Orçado'
+    })
+    setEditItems(os.items || [])
+  }
+
+  async function saveEdit(){
+    if (!editingId) return
+    const updatedOs = await OrdersApi.update(editingId, { ...editForm, items: editItems })
+    setList(prev => prev.map(os => os.id === editingId ? updatedOs : os))
+    setEditingId(null)
+    setEditForm({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
+    setEditItems([])
+  }
+
+  function cancelEdit(){
+    setEditingId(null)
+    setEditForm({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
+    setEditItems([])
+  }
 
   async function create(){
     const os = await OrdersApi.create({ ...form, items })
@@ -33,10 +70,23 @@ export default function Orders(){
     if (os.contact) doc.text(`Contato: ${os.contact}`, 14, 32)
     if (os.device) doc.text(`Aparelho: ${os.device}`, 14, 38)
     if (os.reported_issue) doc.text(`Problema: ${os.reported_issue}`, 14, 44)
-    if (os.diagnosis) doc.text(`Diagnóstico: ${os.diagnosis}`, 14, 50)
+    
+    // Diagnóstico com quebras de linha
+    let yPos = 50
+    if (os.diagnosis) {
+      doc.text(`Diagnóstico:`, 14, yPos)
+      yPos += 6
+      const diagnosisLines = os.diagnosis.split('\n')
+      diagnosisLines.forEach(line => {
+        if (line.trim()) {
+          doc.text(`  ${line.trim()}`, 14, yPos)
+          yPos += 6
+        }
+      })
+    }
 
     const body = os.items.map(it => [it.type, it.description, it.qty, it.unit_price.toFixed(2), it.total.toFixed(2)])
-    autoTable(doc, { startY: 58, head: [["Tipo","Descrição","Qtd","Vlr Unit","Total"]], body })
+    autoTable(doc, { startY: yPos + 4, head: [["Tipo","Descrição","Qtd","Vlr Unit","Total"]], body })
     const total = os.items.reduce((s,it)=> s + it.total, 0)
     doc.text(`Total: R$ ${total.toFixed(2)}`, 14, doc.lastAutoTable.finalY + 10)
     doc.save(`OS_${os.number}.pdf`)
@@ -118,8 +168,8 @@ export default function Orders(){
           </select>
         </div>
         <div className="row">
-          <input style={{flex:1}} placeholder="Problema relatado" value={form.reported_issue} onChange={e=>setForm({...form, reported_issue:e.target.value})} />
-          <input style={{flex:1}} placeholder="Diagnóstico" value={form.diagnosis} onChange={e=>setForm({...form, diagnosis:e.target.value})} />
+          <textarea style={{flex:1, minHeight:'60px', resize:'vertical'}} placeholder="Problema relatado" value={form.reported_issue} onChange={e=>setForm({...form, reported_issue:e.target.value})} />
+          <textarea style={{flex:1, minHeight:'60px', resize:'vertical'}} placeholder="Diagnóstico (use Enter para quebrar linha)" value={form.diagnosis} onChange={e=>setForm({...form, diagnosis:e.target.value})} />
         </div>
         <div className="card" style={{marginTop:12}}>
           <div className="row">
@@ -156,6 +206,7 @@ export default function Orders(){
                   <td>
                     <button onClick={async()=>{ const full = await OrdersApi.get(os.id); generatePDF(full) }}>PDF</button>
                     <button onClick={async()=>{ const full = await OrdersApi.get(os.id); generateTermPDF(full) }}>Termo PDF</button>
+                    <button onClick={()=>startEdit(os)} className="secondary">Editar</button>
                   </td>
                 </tr>
               )
@@ -163,6 +214,51 @@ export default function Orders(){
           </tbody>
         </table>
       </div>
+
+      {/* Modal de Edição */}
+      {editingId && (
+        <div className="card" style={{marginTop: '20px', backgroundColor: '#f8f9fa', border: '2px solid #007bff'}}>
+          <h3>Editar Orçamento #{editForm.number}</h3>
+          
+          <div className="row">
+            <input placeholder="Nº OS" value={editForm.number} onChange={e=>setEditForm({...editForm, number:e.target.value})} />
+            <input placeholder="Cliente" value={editForm.client_name} onChange={e=>setEditForm({...editForm, client_name:e.target.value})} />
+            <input placeholder="Contato" value={editForm.contact} onChange={e=>setEditForm({...editForm, contact:e.target.value})} />
+            <input placeholder="Aparelho" value={editForm.device} onChange={e=>setEditForm({...editForm, device:e.target.value})} />
+            <select value={editForm.status} onChange={e=>setEditForm({...editForm, status:e.target.value})}>
+              <option>Orçado</option><option>Aprovado</option><option>Concluído</option><option>Entregue</option>
+            </select>
+          </div>
+          
+          <div className="row">
+            <textarea style={{flex:1, minHeight:'60px', resize:'vertical'}} placeholder="Problema relatado" value={editForm.reported_issue} onChange={e=>setEditForm({...editForm, reported_issue:e.target.value})} />
+            <textarea style={{flex:1, minHeight:'60px', resize:'vertical'}} placeholder="Diagnóstico (use Enter para quebrar linha)" value={editForm.diagnosis} onChange={e=>setEditForm({...editForm, diagnosis:e.target.value})} />
+          </div>
+          
+          <div className="card" style={{marginTop:12}}>
+            <div className="row">
+              <button className="success" onClick={addEditItem}>Adicionar item</button>
+            </div>
+            {Array.isArray(editItems) ? editItems.map((it, i)=> (
+              <div key={i} className="row" style={{marginTop:8}}>
+                <select value={it.type} onChange={e=>changeEditItem(i,'type',e.target.value)}>
+                  <option value="service">Serviço</option>
+                  <option value="part">Peça</option>
+                </select>
+                <input placeholder="Descrição" value={it.description} onChange={e=>changeEditItem(i,'description',e.target.value)} />
+                <input type="number" step="0.01" placeholder="Qtd" value={it.qty} onChange={e=>changeEditItem(i,'qty',e.target.value)} />
+                <input type="number" step="0.01" placeholder="Vlr Unit" value={it.unit_price} onChange={e=>changeEditItem(i,'unit_price',e.target.value)} />
+                <button className="danger" onClick={()=>removeEditItem(i)}>Remover</button>
+              </div>
+            )) : null}
+            
+            <div className="row" style={{marginTop:8}}>
+              <button className="primary" onClick={saveEdit}>Salvar Alterações</button>
+              <button onClick={cancelEdit}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

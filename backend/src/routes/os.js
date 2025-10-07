@@ -56,15 +56,39 @@ router.put('/:id', (req, res) => {
     device: z.string().optional(),
     reported_issue: z.string().optional(),
     diagnosis: z.string().optional(),
-    status: z.enum(['Orçado','Aprovado','Concluído','Entregue']).optional()
+    status: z.enum(['Orçado','Aprovado','Concluído','Entregue']).optional(),
+    items: z.array(z.object({
+      id: z.number().optional(),
+      type: z.enum(['service','part']),
+      description: z.string().min(1),
+      qty: z.number().min(0.01),
+      unit_cost: z.number().min(0).default(0),
+      unit_price: z.number().min(0).default(0)
+    })).optional()
   });
   const data = schema.parse(req.body);
   const current = get('SELECT * FROM os WHERE id = @id', { id });
   if (!current) return res.status(404).json({ error: 'OS não encontrada' });
+  
+  // Atualizar dados da OS
   const merged = { ...current, ...data };
   run(`UPDATE os SET number=@number, client_name=@client_name, contact=@contact, device=@device,
     reported_issue=@reported_issue, diagnosis=@diagnosis, status=@status WHERE id=@id`, { ...merged, id });
-  res.json(get('SELECT * FROM os WHERE id = @id', { id }));
+  
+  // Atualizar itens se fornecidos
+  if (data.items) {
+    run('DELETE FROM os_items WHERE os_id = @id', { id });
+    for (const it of data.items) {
+      const total = it.qty * it.unit_price;
+      run(`INSERT INTO os_items (os_id,type,description,qty,unit_cost,unit_price,total)
+        VALUES (@os_id,@type,@description,@qty,@unit_cost,@unit_price,@total)`, { ...it, os_id: id, total });
+    }
+  }
+  
+  // Retornar OS completa com itens
+  const os = get('SELECT * FROM os WHERE id = @id', { id });
+  const items = all('SELECT * FROM os_items WHERE os_id = @id', { id });
+  res.json({ ...os, items });
 });
 
 router.put('/:id/items', (req, res) => {
