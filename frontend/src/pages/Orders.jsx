@@ -24,11 +24,13 @@ export default function Orders(){
   // Funções para edição
   function addEditItem(){ setEditItems(prev=>[...prev, { type:'service', description:'', qty:1, unit_cost:0, unit_price:0, total:0 }]) }
   function changeEditItem(i, field, value){ 
+    console.log(`Alterando item ${i}, campo ${field}, valor:`, value)
     setEditItems(prev=> prev.map((it,idx)=> {
       if (idx === i) {
         const updated = { ...it, [field]: (field==='qty'||field==='unit_cost'||field==='unit_price')? Number(value): value }
         // Calcular total automaticamente
         updated.total = updated.qty * updated.unit_price
+        console.log('Item atualizado:', updated)
         return updated
       }
       return it
@@ -39,6 +41,7 @@ export default function Orders(){
   async function startEdit(os){
     if (isEditing) return // Evitar múltiplas chamadas
     console.log('Iniciando edição da OS:', os)
+    console.log('Itens da OS:', os.items)
     setIsEditing(true)
     setEditingId(os.id)
     setEditForm({
@@ -50,7 +53,16 @@ export default function Orders(){
       diagnosis: os.diagnosis || '',
       status: os.status || 'Orçado'
     })
-    setEditItems(os.items || [])
+    // Garantir que os itens tenham os valores corretos
+    const itemsWithValues = (os.items || []).map(item => ({
+      ...item,
+      qty: Number(item.qty) || 1,
+      unit_price: Number(item.unit_price) || 0,
+      unit_cost: Number(item.unit_cost) || 0,
+      total: Number(item.total) || 0
+    }))
+    console.log('Itens processados:', itemsWithValues)
+    setEditItems(itemsWithValues)
   }
 
   async function saveEdit(){
@@ -274,6 +286,9 @@ export default function Orders(){
                 <input placeholder="Descrição" value={it.description} onChange={e=>changeEditItem(i,'description',e.target.value)} />
                 <input type="number" step="0.01" placeholder="Qtd" value={it.qty} onChange={e=>changeEditItem(i,'qty',e.target.value)} />
                 <input type="number" step="0.01" placeholder="Vlr Unit" value={it.unit_price} onChange={e=>changeEditItem(i,'unit_price',e.target.value)} />
+                <span style={{padding:'8px', backgroundColor:'#f0f0f0', borderRadius:'4px', minWidth:'80px', textAlign:'center'}}>
+                  Total: R$ {(it.qty * it.unit_price).toFixed(2)}
+                </span>
                 <button className="danger" onClick={()=>removeEditItem(i)}>Remover</button>
               </div>
             )) : null}
