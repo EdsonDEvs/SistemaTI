@@ -21,11 +21,22 @@ export default function Orders(){
   function removeItem(i){ setItems(prev=> prev.filter((_,idx)=> idx!==i)) }
 
   // Funções para edição
-  function addEditItem(){ setEditItems(prev=>[...prev, { type:'service', description:'', qty:1, unit_cost:0, unit_price:0 }]) }
-  function changeEditItem(i, field, value){ setEditItems(prev=> prev.map((it,idx)=> idx===i? { ...it, [field]: (field==='qty'||field==='unit_cost'||field==='unit_price')? Number(value): value }: it)) }
+  function addEditItem(){ setEditItems(prev=>[...prev, { type:'service', description:'', qty:1, unit_cost:0, unit_price:0, total:0 }]) }
+  function changeEditItem(i, field, value){ 
+    setEditItems(prev=> prev.map((it,idx)=> {
+      if (idx === i) {
+        const updated = { ...it, [field]: (field==='qty'||field==='unit_cost'||field==='unit_price')? Number(value): value }
+        // Calcular total automaticamente
+        updated.total = updated.qty * updated.unit_price
+        return updated
+      }
+      return it
+    }))
+  }
   function removeEditItem(i){ setEditItems(prev=> prev.filter((_,idx)=> idx!==i)) }
 
   async function startEdit(os){
+    console.log('Iniciando edição da OS:', os)
     setEditingId(os.id)
     setEditForm({
       number: os.number || '',
@@ -41,11 +52,19 @@ export default function Orders(){
 
   async function saveEdit(){
     if (!editingId) return
-    const updatedOs = await OrdersApi.update(editingId, { ...editForm, items: editItems })
-    setList(prev => prev.map(os => os.id === editingId ? updatedOs : os))
-    setEditingId(null)
-    setEditForm({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
-    setEditItems([])
+    try {
+      console.log('Salvando edição:', { editingId, editForm, editItems })
+      const updatedOs = await OrdersApi.update(Number(editingId), { ...editForm, items: editItems })
+      console.log('OS atualizada:', updatedOs)
+      setList(prev => prev.map(os => os.id === editingId ? updatedOs : os))
+      setEditingId(null)
+      setEditForm({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
+      setEditItems([])
+      alert('Orçamento atualizado com sucesso!')
+    } catch (error) {
+      console.error('Erro ao salvar edição:', error)
+      alert('Erro ao salvar alterações: ' + error.message)
+    }
   }
 
   function cancelEdit(){
