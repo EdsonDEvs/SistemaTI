@@ -13,6 +13,7 @@ export default function Orders(){
   const [editingId, setEditingId] = useState(null)
   const [editForm, setEditForm] = useState({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
   const [editItems, setEditItems] = useState([])
+  const [isEditing, setIsEditing] = useState(false)
 
   useEffect(()=>{ OrdersApi.list().then(setList) },[])
 
@@ -36,7 +37,9 @@ export default function Orders(){
   function removeEditItem(i){ setEditItems(prev=> prev.filter((_,idx)=> idx!==i)) }
 
   async function startEdit(os){
+    if (isEditing) return // Evitar múltiplas chamadas
     console.log('Iniciando edição da OS:', os)
+    setIsEditing(true)
     setEditingId(os.id)
     setEditForm({
       number: os.number || '',
@@ -58,6 +61,7 @@ export default function Orders(){
       console.log('OS atualizada:', updatedOs)
       setList(prev => prev.map(os => os.id === editingId ? updatedOs : os))
       setEditingId(null)
+      setIsEditing(false)
       setEditForm({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
       setEditItems([])
       alert('Orçamento atualizado com sucesso!')
@@ -69,6 +73,7 @@ export default function Orders(){
 
   function cancelEdit(){
     setEditingId(null)
+    setIsEditing(false)
     setEditForm({ number:'', client_name:'', contact:'', device:'', reported_issue:'', diagnosis:'', status:'Orçado' })
     setEditItems([])
   }
@@ -225,7 +230,9 @@ export default function Orders(){
                   <td>
                     <button onClick={async()=>{ const full = await OrdersApi.get(os.id); generatePDF(full) }}>PDF</button>
                     <button onClick={async()=>{ const full = await OrdersApi.get(os.id); generateTermPDF(full) }}>Termo PDF</button>
-                    <button onClick={()=>startEdit(os)} className="secondary">Editar</button>
+                    <button onClick={()=>startEdit(os)} className="secondary" disabled={isEditing}>
+                      {isEditing && editingId === os.id ? 'Editando...' : 'Editar'}
+                    </button>
                   </td>
                 </tr>
               )
